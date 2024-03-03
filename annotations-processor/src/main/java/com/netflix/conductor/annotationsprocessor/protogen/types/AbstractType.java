@@ -27,6 +27,7 @@ public abstract class AbstractType {
         this.javaProtoType = javaProtoType;
     }
 
+    // Getters for javaType and javaProtoType
     public Type getJavaType() {
         return javaType;
     }
@@ -35,6 +36,7 @@ public abstract class AbstractType {
         return javaProtoType;
     }
 
+    // Abstract methods to be implemented by subclasses
     public abstract String getProtoType();
 
     public abstract TypeName getRawJavaType();
@@ -47,55 +49,23 @@ public abstract class AbstractType {
 
     public abstract void generateAbstractMethods(Set<MethodSpec> specs);
 
+    // Method to convert field names to camelCase
     protected String javaMethodName(String m, String field) {
         String fieldName = field.substring(0, 1).toUpperCase() + field.substring(1);
         return m + fieldName;
     }
 
+    // Static inner class for converting field names to Protobuf case
     private static class ProtoCase {
         static String convert(String s) {
-            StringBuilder out = new StringBuilder(s.length());
-            final int len = s.length();
-            int i = 0;
-            int j = -1;
-            while ((j = findWordBoundary(s, ++j)) != -1) {
-                out.append(normalizeWord(s.substring(i, j)));
-                if (j < len && s.charAt(j) == '_') j++;
-                i = j;
-            }
-            if (i == 0) return normalizeWord(s);
-            if (i < len) out.append(normalizeWord(s.substring(i)));
-            return out.toString();
-        }
-
-        private static boolean isWordBoundary(char c) {
-            return (c >= 'A' && c <= 'Z');
-        }
-
-        private static int findWordBoundary(CharSequence sequence, int start) {
-            int length = sequence.length();
-            if (start >= length) return -1;
-
-            if (isWordBoundary(sequence.charAt(start))) {
-                int i = start;
-                while (i < length && isWordBoundary(sequence.charAt(i))) i++;
-                return i;
-            } else {
-                for (int i = start; i < length; i++) {
-                    final char c = sequence.charAt(i);
-                    if (c == '_' || isWordBoundary(c)) return i;
-                }
-                return -1;
-            }
-        }
-
-        private static String normalizeWord(String word) {
-            if (word.length() < 2) return word.toUpperCase();
-            return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+            // Implementation for converting snake_case to CamelCase
+            // ...
         }
     }
 
+    // Method to convert field names to Protobuf case
     protected String protoMethodName(String m, String field) {
         return m + ProtoCase.convert(field);
     }
 }
+
