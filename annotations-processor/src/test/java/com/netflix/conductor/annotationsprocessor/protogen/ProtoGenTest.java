@@ -28,9 +28,10 @@ import com.google.common.io.Resources;
 import static org.junit.Assert.*;
 
 public class ProtoGenTest {
-    private static final Charset charset = StandardCharsets.UTF_8;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
-    @Rule public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void happyPath() throws Exception {
@@ -60,11 +61,13 @@ public class ProtoGenTest {
 
         List<File> models = Lists.newArrayList(modelDir.listFiles());
         assertEquals(1, models.size());
-        File exampleProtoFile =
-                models.stream().filter(f -> f.getName().equals("example.proto")).findFirst().get();
+        File exampleProtoFile = models.stream().filter(f -> f.getName().equals("example.proto")).findFirst().orElse(null);
+        assertNotNull(exampleProtoFile);
         assertTrue(exampleProtoFile.length() > 0);
-        assertEquals(
-                Resources.asCharSource(Resources.getResource("example.proto.txt"), charset).read(),
-                Files.asCharSource(exampleProtoFile, charset).read());
+
+        String expectedProtoContent = Resources.asCharSource(Resources.getResource("example.proto.txt"), CHARSET).read();
+        String actualProtoContent = Files.asCharSource(exampleProtoFile, CHARSET).read();
+        assertEquals(expectedProtoContent, actualProtoContent);
     }
 }
+
